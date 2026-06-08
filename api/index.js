@@ -350,6 +350,48 @@ app.get('/api/lessons', async (req, res) => {
 app.get('/api/lessons/:id', async (req, res) => {
   const { id } = req.params;
   try {
+    if (supabase) {
+      const { data: lesson, error: lessonError } = await supabase
+        .from('lessons')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (!lessonError && lesson) {
+        const { data: vocab } = await supabase
+          .from('vocabularies')
+          .select('*')
+          .eq('lesson_id', id);
+
+        const { data: sentences } = await supabase
+          .from('sentences')
+          .select('*')
+          .eq('lesson_id', id);
+
+        const { data: dialogues } = await supabase
+          .from('dialogues')
+          .select('*')
+          .eq('lesson_id', id);
+
+        const vocabIds = vocab ? vocab.map(v => v.id) : [];
+        const sentenceIds = sentences ? sentences.map(s => s.id) : [];
+        const entityIds = [id, ...vocabIds, ...sentenceIds];
+
+        const { data: translations } = await supabase
+          .from('translations')
+          .select('*')
+          .in('entity_id', entityIds);
+
+        return res.json({
+          ...lesson,
+          vocabularies: vocab || [],
+          sentences: sentences || [],
+          dialogues: dialogues || [],
+          translations: translations || []
+        });
+      }
+    }
+
     const db = await readDb();
     const lesson = db.lessons.find(l => l.id === id);
     if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
@@ -376,6 +418,30 @@ app.put('/api/lessons/:id', async (req, res) => {
   const { title, goal, vocabularies, sentences, dialogues } = req.body;
 
   try {
+    if (supabase) {
+      const { data: lesson, error: lessonError } = await supabase
+        .from('lessons')
+        .select('id')
+        .eq('id', id)
+        .single();
+
+      if (!lessonError && lesson) {
+        await supabase.from('lessons').update({ title, goal }).eq('id', id);
+
+        if (Array.isArray(vocabularies) && vocabularies.length > 0) {
+          await supabase.from('vocabularies').upsert(vocabularies);
+        }
+        if (Array.isArray(sentences) && sentences.length > 0) {
+          await supabase.from('sentences').upsert(sentences);
+        }
+        if (Array.isArray(dialogues) && dialogues.length > 0) {
+          await supabase.from('dialogues').upsert(dialogues, { onConflict: 'lesson_id,segment_id' });
+        }
+
+        return res.json({ message: 'Lesson updated successfully' });
+      }
+    }
+
     const db = await readDb();
     const lessonIndex = db.lessons.findIndex(l => l.id === id);
     if (lessonIndex === -1) return res.status(404).json({ error: 'Lesson not found' });
@@ -411,48 +477,48 @@ app.put('/api/lessons/:id', async (req, res) => {
     }
 
     await writeDb(db);
-
-    if (supabase) {
-      await supabase.from('lessons').update({ title, goal }).eq('id', id);
-
-      if (Array.isArray(vocabularies)) {
-        for (const v of vocabularies) {
-          await supabase.from('vocabularies').upsert(v);
-        }
-      }
-      if (Array.isArray(sentences)) {
-        for (const s of sentences) {
-          await supabase.from('sentences').upsert(s);
-        }
-      }
-      if (Array.isArray(dialogues)) {
-        for (const d of dialogues) {
-          await supabase.from('dialogues').upsert(d);
-        }
-      }
-    }
-
     res.json({ message: 'Lesson updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// -------------------------------------------------------------
-// CLEAN JSON EXPORT ENDPOINT FOR MOBILE APP
-// -------------------------------------------------------------
 app.get('/api/lessons/:id/export', async (req, res) => {
   const { id } = req.params;
   const { native } = req.query;
 
   try {
-    const db = await readDb();
-    const lesson = db.lessons.find(l => l.id === id);
-    if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
+    let lesson, vocab, sentences, dialogues, translations;
 
-    const vocab = db.vocabularies.filter(v => v.lesson_id === id);
-    const sentences = db.sentences.filter(s => s.lesson_id === id);
-    const dialogues = db.dialogues.filter(d => d.lesson_id === id);
+    if (supabase) {
+      const { data: les, error: lesErr } = await supabase.from('lessons').select('*').eq('id', id).single();
+      if (!lesErr && les) {
+        lesson = les;
+        const { data: voc } = await supabase.from('vocabularies').select('*').eq('lesson_id', id);
+        vocab = voc || [];
+        const { data: sen } = await supabase.from('sentences').select('*').eq('lesson_id', id);
+        sentences = sen || [];
+        const { data: dia } = await supabase.from('dialogues').select('*').eq('lesson_id', id);
+        dialogues = dia || [];
+
+        const vocabIds = vocab.map(v => v.id);
+        const sentenceIds = sentences.map(s => s.id);
+        const entityIds = [id, ...vocabIds, ...sentenceIds];
+        const { data: trans } = await supabase.from('translations').select('*').in('entity_id', entityIds);
+        translations = trans || [];
+      }
+    }
+
+    if (!lesson) {
+      const db = await readDb();
+      const les = db.lessons.find(l => l.id === id);
+      if (!les) return res.status(404).json({ error: 'Lesson not found' });
+      lesson = les;
+      vocab = db.vocabularies.filter(v => v.lesson_id === id);
+      sentences = db.sentences.filter(s => s.lesson_id === id);
+      dialogues = db.dialogues.filter(d => d.lesson_id === id);
+      translations = db.translations.filter(t => t.entity_id === id || vocab.some(v => v.id === t.entity_id) || sentences.some(s => s.id === t.entity_id));
+    }
 
     const segments = [];
 
@@ -521,7 +587,7 @@ app.get('/api/lessons/:id/export', async (req, res) => {
     };
 
     if (native && native !== 'en') {
-      const nativeTranslations = db.translations.filter(t => t.native_language_id === native);
+      const nativeTranslations = translations.filter(t => t.native_language_id === native);
       const titleTrans = nativeTranslations.find(t => t.entity_id === id && t.entity_type === 'lesson_title');
       if (titleTrans) exportPayload.title = titleTrans.translated_text;
 
