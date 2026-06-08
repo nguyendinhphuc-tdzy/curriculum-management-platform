@@ -2,7 +2,7 @@
   "name": "yap-curriculum-management-platform",
   "version": "1.0.0",
   "description": "Curriculum Management Platform for Yap",
-  "main": "server.js",
+  "main": "api/index.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
