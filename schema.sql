@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS lessons (
     lesson_number INTEGER NOT NULL, -- e.g., 1
     title TEXT NOT NULL, -- Lesson Title (Default English / Source language)
     goal TEXT, -- Lesson Goal/Objective
+    type VARCHAR(20) DEFAULT 'micro', -- 'micro' or 'dialogue'
     max_duration_seconds INTEGER DEFAULT 210,
     version VARCHAR(20) DEFAULT '1.0.0',
     content_version VARCHAR(20) DEFAULT '1.0.0',
@@ -71,6 +72,7 @@ CREATE TABLE IF NOT EXISTS dialogues (
     segment_id VARCHAR(100) NOT NULL, -- e.g., 'CN_L101_MICRO_A01'
     character_or_role VARCHAR(50) DEFAULT 'Tutor', -- Role e.g., 'Tutor', 'Learner'
     text TEXT NOT NULL, -- Clean tutor text (no tags)
+    english TEXT, -- English translation or description
     audio_file VARCHAR(255), -- e.g., 'segment_001.m4a'
     tts_tag TEXT, -- Tagged text for Gemini TTS e.g. '[warmly] Hello...'
     transcript_cues JSONB DEFAULT '[]'::jsonb, -- Aligned word-level timestamps from Whisper

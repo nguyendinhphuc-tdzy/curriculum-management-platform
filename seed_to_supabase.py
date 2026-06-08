@@ -35,7 +35,7 @@ except ImportError:
 supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 # -------------------------------------------------------------
-// Seeding Data (Aligned with Excel [Original] Yapsu AI Curriculum.xlsx)
+# Seeding Data (Aligned with Excel [Original] Yapsu AI Curriculum.xlsx)
 # -------------------------------------------------------------
 
 languages = [
