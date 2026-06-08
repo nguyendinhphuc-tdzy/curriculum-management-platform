@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yap! Curriculum Management Platform</title>
+  <!-- Google Fonts for premium modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Layout Wrapper -->
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">✨</span>
+          <h1>Yap! Curriculum</h1>
+        </div>
+        <p class="tagline">Internal Management Platform</p>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filter-group">
+        <h3>Filter Curriculum</h3>
+        
+        <label for="language-select">Target Language</label>
+        <div class="select-wrapper">
+          <select id="language-select">
+            <option value="zh">Chinese (zh)</option>
+            <option value="ja" selected>Japanese (ja)</option>
+          </select>
+        </div>
+
+        <label for="level-select">Level</label>
+        <div class="select-wrapper">
+          <select id="level-select">
+            <option value="1" selected>Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lessons Navigation List -->
+      <div class="lessons-nav">
+        <h3>Lessons List</h3>
+        <ul id="lessons-list" class="nav-list">
+          <!-- Populated dynamically by JS -->
+          <li class="loading-item">Loading lessons...</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="avatar">O</div>
+          <div class="user-info">
+            <p class="username">Content Operator</p>
+            <p class="role">Marketing / Content Editor</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      
+      <!-- Top Action Bar -->
+      <header class="workspace-header">
+        <div class="lesson-meta-header">
+          <h2 id="current-lesson-title">Select a Lesson</h2>
+          <span id="lesson-id-badge" class="badge">No Lesson Selected</span>
+        </div>
+        
+        <div class="action-buttons">
+          <button id="save-btn" class="btn btn-primary disabled" disabled>
+            <span class="btn-icon">💾</span> Save Changes
+          </button>
+          <button id="preview-json-btn" class="btn btn-secondary disabled" disabled>
+            <span class="btn-icon">👁️</span> Preview JSON
+          </button>
+          <button id="export-json-btn" class="btn btn-success disabled" disabled>
+            <span class="btn-icon">📥</span> Export JSON
+          </button>
+        </div>
+      </header>
+
+      <!-- Status Alerts / Notification Banner -->
+      <div id="toast" class="toast">
+        <span id="toast-text">All changes synced.</span>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tabs-wrapper">
+        <nav class="tabs" aria-label="Lesson Components">
+          <button class="tab-btn active" data-tab="vocab">
+            📖 Vocabulary <span class="tab-count" id="vocab-count">0</span>
+          </button>
+          <button class="tab-btn" data-tab="sentences">
+            💬 Sentences <span class="tab-count" id="sentences-count">0</span>
+          </button>
+          <button class="tab-btn" data-tab="dialogue">
+            🎙️ Tutor Script <span class="tab-count" id="dialogue-count">0</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content Area -->
+      <section class="grid-workspace">
+        
+        <!-- Vocabulary Tab Content -->
+        <div class="tab-content active" id="tab-vocab">
+          <div class="grid-table-container">
+            <table class="grid-table" id="vocab-table">
+              <thead>
+                <tr>
+                  <th style="width: 15%">Segment ID</th>
+                  <th style="width: 20%">Character</th>
+                  <th style="width: 20%">Pinyin / Furigana</th>
+                  <th style="width: 20%">Romanization</th>
+                  <th style="width: 25%">English Meaning</th>
+                </tr>
+              </thead>
+              <tbody id="vocab-tbody">
+                <tr>
+                  <td colspan="5" class="empty-state">Select a lesson to load vocabulary items.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sentences Tab Content -->
+        <div class="tab-content" id="tab-sentences">
+          <div class="grid-table-container">
+            <table class="grid-table" id="sentences-table">
+              <thead>
+                <tr>
+                  <th style="width: 15%">Segment ID</th>
+                  <th style="width: 25%">Content</th>
+                  <th style="width: 20%">Pinyin / Reading</th>
+                  <th style="width: 20%">Romanization</th>
+                  <th style="width: 20%">English Meaning</th>
+                </tr>
+              </thead>
+              <tbody id="sentences-tbody">
+                <tr>
+                  <td colspan="5" class="empty-state">Select a lesson to load sentence items.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Dialogue / Tutor Script Tab Content -->
+        <div class="tab-content" id="tab-dialogue">
+          <div class="grid-table-container">
+            <table class="grid-table" id="dialogue-table">
+              <thead>
+                <tr>
+                  <th style="width: 15%">Segment ID</th>
+                  <th style="width: 45%">Clean Tutor Text</th>
+                  <th style="width: 40%">Gemini TTS Tagged Text (e.g. [pause], [warmly])</th>
+                </tr>
+              </thead>
+              <tbody id="dialogue-tbody">
+                <tr>
+                  <td colspan="3" class="empty-state">Select a lesson to load dialogue lines.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- JSON Preview Modal -->
+  <div class="modal" id="json-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Export Preview: <span id="modal-lesson-id">JP_L101_MICRO</span>_spec.json</h2>
+        <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre><code id="json-code-block">Loading JSON preview...</code></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="copy-json-btn" class="btn btn-secondary">Copy to Clipboard</button>
+        <button id="download-json-btn" class="btn btn-success">Download File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

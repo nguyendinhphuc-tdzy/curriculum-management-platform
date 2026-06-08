@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kế Hoạch Triển Khai - Curriculum Management Platform</title>
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Embedded CSS for premium styling -->
+  <style>
+    :root {
+      --bg-primary: hsl(222, 47%, 11%);
+      --bg-secondary: hsl(224, 47%, 7%);
+      --bg-surface: rgba(30, 41, 59, 0.45);
+      --bg-surface-solid: hsl(223, 47%, 15%);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: hsl(250, 84%, 67%);
+      
+      --text-primary: hsl(210, 40%, 98%);
+      --text-secondary: hsl(215, 20%, 75%);
+      --text-muted: hsl(215, 16%, 57%);
+      
+      --color-success: hsl(150, 80%, 45%);
+      --color-warning: hsl(35, 92%, 55%);
+      --color-danger: hsl(350, 89%, 60%);
+      
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-primary);
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(253, 60%, 25%, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(215, 60%, 15%, 0.2) 0px, transparent 50%);
+      color: var(--text-primary);
+      line-height: 1.7;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(16px);
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 32px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 32px;
+      background: linear-gradient(135deg, #fff, var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-top: 40px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 24px;
+      color: var(--border-focus);
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+
+    ul {
+      margin-bottom: 20px;
+      padding-left: 24px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    strong {
+      color: #fff;
+    }
+
+    /* Alert Blocks */
+    .alert {
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      margin: 24px 0;
+      font-size: 14px;
+    }
+
+    .alert-important {
+      background-color: rgba(99, 102, 241, 0.1);
+      border-left: 4px solid var(--border-focus);
+      color: var(--text-primary);
+    }
+
+    .alert-important strong {
+      color: var(--border-focus);
+    }
+
+    /* Mermaid Canvas styling */
+    .mermaid-container {
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin: 24px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Code highlights */
+    pre code {
+      font-family: monospace;
+      font-size: 13px;
+      color: hsl(150, 70%, 70%);
+    }
+
+    .divider {
+      height: 1px;
+      background-color: var(--border-color);
+      margin: 32px 0;
+    }
+  </style>
+
+  <!-- Import Mermaid ESM from CDN -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      themeVariables: {
+        background: 'transparent',
+        primaryColor: '#6366f1',
+        nodeBorder: 'rgba(255,255,255,0.1)'
+      }
+    });
+  </script>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Kế Hoạch Triển Khai - Curriculum Management Platform</h1>
+    
+    <p>Tài liệu này tóm tắt bài toán, phân tích các giải pháp kỹ thuật, đề xuất phân chia phạm vi (Scope MVP vs Long-term) và đưa ra các đề xuất cụ thể dựa trên ý kiến phản hồi của anh Khoa.</p>
+
+    <div class="divider"></div>
+
+    <h2>1. Tóm Tắt Bài Toán (Problem Summary)</h2>
+    <p>Yap là ứng dụng học ngôn ngữ thông qua hội thoại giao tiếp (Speaking-first). Quy trình soạn thảo giáo trình và sản xuất audio hiện tại đang được thực hiện bán thủ công qua nhiều bước rời rạc:</p>
+    <ul>
+      <li><strong>Biên soạn kịch bản:</strong> Operator (chị Huyền) sử dụng prompt ChatGPT để sinh nội dung giáo trình theo 7 giai đoạn rồi điền vào các file Excel riêng lẻ cho từng ngôn ngữ.</li>
+      <li><strong>Sản xuất âm thanh:</strong> Operator tải file Excel lên Google Colab (do anh Khoa thiết lập) để gọi API sinh âm thanh, sau đó tải về máy và upload thủ công lên Google Drive.</li>
+      <li><strong>Đồng bộ ứng dụng:</strong> Lập trình viên di động (anh Khoa) phải kiểm tra chất lượng file và import dữ liệu thủ công vào database của ứng dụng.</li>
+    </ul>
+
+    <h2>2. Đề Xuất Thiết Kế & Phân Tích Trade-offs</h2>
+
+    <h3>Vấn Đề 1: Cấu Trúc Bài Học Động (Micro vs Non-Micro UI)</h3>
+    <p><strong>Bối cảnh:</strong> Tiếng Trung ở Level 1,2,3 kết hợp cả hai cấu trúc: Micro (3 bài đầu, có Tutor Script giải thích từng câu thoại) và cấu trúc cũ Non-Micro (các bài sau, chỉ có Dialogue hội thoại nhân vật). Các ngôn ngữ khác chỉ có Micro hoặc không có Micro.</p>
+    <ul>
+      <li><strong>Phương án đề xuất: Dynamic Tab Workspace (Chọn)</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Hệ thống phân biệt bài học qua trường <code>lesson_type</code> (micro/dialogue). Nếu là <strong>micro</strong>: Hiện 3 tab chỉnh sửa Vocabulary, Sentences và Tutor Script (_A*). Nếu là <strong>dialogue</strong> (bài cũ): Hiện tab Vocabulary và tab Dialogue Script (hội thoại qua lại giữa các nhân vật). Nếu ngôn ngữ không hỗ trợ Tutor Script: Ẩn hoàn toàn tab hội thoại.</p>
+        <p style="margin-top: 4px; font-size: 13px;"><em>Trade-offs:</em> Ưu tiên hàng đầu về mặt Simplicity cho Operator, tốc độ phát triển MVP nhanh, cấu trúc JSON xuất ra Mobile App cực kỳ ổn định.</p>
+      </li>
+      <li><strong>Phương án 2: Notion-style Blocks (Không chọn)</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Cho phép Operator tùy ý tạo bất cứ loại thẻ nào. Phương án này quá phức tạp để hoàn thành kịp MVP và dễ gây lỗi dữ liệu khi xuất JSON.</p>
+      </li>
+    </ul>
+
+    <h3>Vấn Đề 2: Quản Lý Bản Dịch Đa Ngôn Ngữ Native (Localization Matrix)</h3>
+    <ul>
+      <li><strong>Phương án A (Cột động hiển thị song song như Excel):</strong> Thuận tiện cho Operator review đối soát bản dịch và AI dễ sinh dữ liệu, nhưng tệ về thiết kế DB vì phải thay đổi schema cột vật lý mỗi khi thêm Native mới.</li>
+      <li><strong>Phương án B (Translation Map - Quan hệ 1-nhiều):</strong> DB cực kỳ chuẩn hóa và mở rộng không giới hạn, nhưng con người và AI khó đối soát trực tiếp do dữ liệu bị tách dòng.</li>
+      <li><strong>Đề xuất lựa chọn: Mô hình Hybrid (DB Chuẩn Hóa B - UI Hiện Thị Cột A)</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Database lưu trữ chuẩn hóa theo dạng 1-nhiều (Translations table). Tuy nhiên, API backend sẽ tự động <code>JOIN</code> và pivot dữ liệu để trả về dạng <strong>Cột động song song</strong> cho giao diện Web UI và AI Agent. Giúp đạt được cả hai mục đích: Con người dễ review, AI dễ viết, DB chuẩn hóa.</p>
+      </li>
+    </ul>
+
+    <h3>Vấn Đề 3: Cơ Chế QA Audio Tự Động & Sửa Lỗi</h3>
+    <p>Tránh tình trạng AI tự động gọi sinh lại audio lỗi bị lặp vô hạn (infinite loop) gây chậm trễ toàn bộ tiến trình của batch:</p>
+    <ul>
+      <li><strong>Bước 1 (Batch-end Queue):</strong> Khi chạy batch sinh audio, câu thoại nào bị lỗi QA (ví dụ đọc nhầm tag) sẽ không thử sinh lại ngay lập tức mà bị đánh dấu lỗi và đẩy xuống <strong>cuối hàng đợi (queue at the end)</strong>.</li>
+      <li><strong>Bước 2 (Retry giới hạn):</strong> Sau khi xong toàn bộ batch, hệ thống thử chạy lại các file lỗi tối đa 2 lần ở cuối batch.</li>
+      <li><strong>Bước 3 (Manual Fix Dashboard):</strong> Nếu vẫn lỗi, hệ thống hiển thị cảnh báo đỏ trên Dashboard kèm log chi tiết từ Whisper. Operator sửa text/tag lỗi trực tiếp trên giao diện rồi bấm <strong>Regenerate</strong> riêng câu đó.</li>
+    </ul>
+
+    <h2>3. Đề Xuất Phân Chi Phạm Vi (Scope MVP vs Long-term)</h2>
+
+    <h3>A. MVP Scope (Bàn giao 12:00 trưa Thứ Ba - 9/6)</h3>
+    <p>Mục tiêu chính là xây dựng nền móng dữ liệu tập trung, cho phép CRUD nội dung bài học và từ vựng cơ bản thông qua giao diện dạng bảng, giúp anh Khoa lấy được JSON sạch cho Mobile App mà không cần file Excel.</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+        graph LR
+          User[Marketing / Content Operator] -->|CRUD| WebPlatform[Curriculum Platform MVP]
+          WebPlatform -->|Lưu trữ| SupabaseDB[(Supabase DB)]
+          MobileApp[Mobile App API] -->|Query JSON sạch| SupabaseDB
+      </pre>
+    </div>
+
+    <ul>
+      <li><strong>Database Design (Supabase):</strong> Thiết kế và triển khai schema PostgreSQL hỗ trợ cả Micro và Dialogue cũ, đa native (EN, VI).</li>
+      <li><strong>Giao Diện Grid Editor Cơ Bản (Minimal Airtable Clone):</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Soạn thảo, chỉnh sửa trực tiếp dạng bảng lưới đối với Từ vựng (Vocabulary) và Mẫu câu (Sentence) của từng bài học.</p>
+      </li>
+      <li><strong>Xuất Bản Dữ Liệu (Export JSON API):</strong> API Endpoint xuất cấu trúc JSON sạch cho từng bài học phục vụ Mobile App.</p>
+    </ul>
+
+    <h3>B. Long-term Scope (Phát triển sau MVP)</h3>
+    <ul>
+      <li><strong>Phase 2: Dialogue & Drill Editors</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Giao diện soạn thảo hội thoại Tutor theo dạng timeline; Công cụ tự động sinh các bài tập (Drill, Extra Drill) dựa trên ngân hàng từ vựng.</p>
+      </li>
+      <li><strong>Phase 3: AI & Media Automation</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Tích hợp nút bấm sinh audio qua Gemini TTS; Dashboard hiển thị log lỗi của Whisper Audio QA cho phép nghe thử và sinh lại.</p>
+      </li>
+      <li><strong>Phase 4: Localization Matrix & Sync</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Giao diện dịch thuật song song (side-by-side); cơ chế Webhooks đồng bộ trực tiếp lên Database Production của Mobile App.</p>
+      </li>
+    </ul>
+
+    <h2>4. Kế Hoạch Xác Minh (Verification Plan)</h2>
+    <h3>Automated Verification</h3>
+    <ul>
+      <li>Kiểm tra tính toàn vẹn của Database Schema bằng cách seed dữ liệu mẫu cho Level 1 của tiếng Trung (CN) và tiếng Nhật (JP).</li>
+      <li>Unit test cho API endpoint xuất JSON bài học, đảm bảo cấu trúc trả về khớp 100% với định dạng Mobile App.</li>
+    </ul>
+
+    <h3>Manual Verification</h3>
+    <ul>
+      <li>Người vận hành thử chỉnh sửa từ vựng và câu mẫu trên Grid Editor, kiểm tra xem dữ liệu trong Supabase/local file có cập nhật tức thời không.</li>
+      <li>Xuất file JSON bài học và gửi cho anh Khoa nạp vào ứng dụng để kiểm tra tính tương thích trên giao diện mobile.</li>
+    </ul>
+
+    <h2>5. Kế Hoạch Phối Hợp & Action Items Cho Anh Khoa (CTA)</h2>
+    <p>Để triển khai suôn sẻ và đảm bảo tính tương thích cao nhất giữa Platform và Mobile App, dưới đây là các đầu việc và câu hỏi cần <strong>anh Khoa phối hợp xử lý / trả lời</strong>:</p>
+    <ul>
+      <li><strong>1. Chốt cấu trúc Lesson Table trên Airtable/Notion:</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Anh Khoa đang thử nghiệm cấu trúc bảng bài học chuẩn hóa cho các ngôn ngữ khác nhau trên Airtable/Notion. Hành động (CTA): Khoa gửi lại bản thiết kế cấu trúc bảng hoàn chỉnh nhất cho Phúc để đồng bộ cấu trúc Schema trên Supabase. (Độ ưu tiên: <strong>Khẩn cấp</strong>).</p>
+      </li>
+      <li><strong>2. Duyệt thiết kế DB Schema (Supabase):</strong>
+        <p style="margin-top: 4px; font-size: 13px;">File SQL <a href="file:///c:/Users/PC/Downloads/EveryLab%20workspace/curriculum-management-platform/schema.sql">schema.sql</a> đã được tạo sẵn để triển khai trên Supabase. Hành động (CTA): Khoa xem qua định dạng bảng và mối quan hệ để xác nhận cấu trúc này đã tối ưu cho các truy vấn của Mobile App chưa.</p>
+      </li>
+      <li><strong>3. Đối soát định dạng JSON xuất bản (JSON Export Specification):</strong>
+        <p style="margin-top: 4px; font-size: 13px;">API xuất JSON bài học đã có bản chạy thử nghiệm tại <code>http://localhost:3000/api/lessons/JP_L101_MICRO/export</code>. Hành động (CTA): Khoa tải thử file JSON này về và nạp thử vào app mobile (mock local) để kiểm tra xem có gặp lỗi parse dữ liệu hoặc lỗi hiển thị nào không.</p>
+      </li>
+      <li><strong>4. Thống nhất Cơ chế QA & Whisper local:</strong>
+        <p style="margin-top: 4px; font-size: 13px;">Thống nhất quy ước đặt tên file audio (ví dụ <code>segment_001.m4a</code> khớp với Segment ID) và cách thức lưu trữ file log QA của Whisper. Hành động (CTA): Khoa xác nhận định dạng log lỗi mong muốn hiển thị trên Dashboard (VD: file JSON chứa status của từng segment) để Phúc thiết kế API endpoint lưu vết lỗi QA.</p>
+      </li>
+    </ul>
+
+  </div>
+
+</body>
+</html>
