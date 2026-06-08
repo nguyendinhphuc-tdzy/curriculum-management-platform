@@ -2,6 +2,11 @@ import os
 import sys
 import re
 from pathlib import Path
+
+# Ensure stdout uses UTF-8 to prevent encoding errors on Windows console
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 # Try to load using python-dotenv, fallback to manual parsing if missing
 try:
     from dotenv import load_dotenv
@@ -23,6 +28,20 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     print("Error: SUPABASE_URL and SUPABASE_ANON_KEY are required in .env file.")
     sys.exit(1)
+
+# Monkeypatch openpyxl to bypass invalid color validation error
+try:
+    import openpyxl.styles.colors
+    original_rgb_set = openpyxl.styles.colors.RGB.__set__
+    def patched_rgb_set(self, instance, value):
+        try:
+            original_rgb_set(self, instance, value)
+        except ValueError:
+            # Fallback to transparent/default color if regex check fails
+            super(openpyxl.styles.colors.RGB, self).__set__(instance, "00000000")
+    openpyxl.styles.colors.RGB.__set__ = patched_rgb_set
+except Exception as e:
+    pass
 
 try:
     from openpyxl import load_workbook

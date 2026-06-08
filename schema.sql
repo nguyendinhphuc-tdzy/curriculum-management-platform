@@ -1,5 +1,9 @@
 -- PostgreSQL Database Schema for Yap Curriculum Management Platform
 
+-- HƯỚNG DẪN RESET DATABASE (Nếu bảng đã tồn tại và bị sai kiểu dữ liệu UUID):
+-- Hãy bỏ comment (xóa dấu --) dòng dưới đây và chạy trong SQL Editor để xóa sạch bảng cũ trước khi tạo lại:
+-- DROP TABLE IF EXISTS translations, dialogues, sentences, vocabularies, lessons, levels, native_languages, languages CASCADE;
+
 -- Enable UUID extension if not enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -19,7 +23,7 @@ CREATE TABLE IF NOT EXISTS native_languages (
 
 -- 3. Levels Table
 CREATE TABLE IF NOT EXISTS levels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id VARCHAR(50) PRIMARY KEY, -- e.g., 'level-1-zh'
     language_id VARCHAR(10) REFERENCES languages(id) ON DELETE CASCADE,
     level_number INTEGER NOT NULL, -- e.g., 1, 2, 3, 4, 5
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -29,7 +33,7 @@ CREATE TABLE IF NOT EXISTS levels (
 -- 4. Lessons Table
 CREATE TABLE IF NOT EXISTS lessons (
     id VARCHAR(50) PRIMARY KEY, -- e.g., 'CN_L101_MICRO'
-    level_id UUID REFERENCES levels(id) ON DELETE CASCADE,
+    level_id VARCHAR(50) REFERENCES levels(id) ON DELETE CASCADE,
     code VARCHAR(20) NOT NULL, -- e.g., 'CN_L101'
     lesson_number INTEGER NOT NULL, -- e.g., 1
     title TEXT NOT NULL, -- Lesson Title (Default English / Source language)
@@ -98,3 +102,14 @@ CREATE INDEX IF NOT EXISTS idx_vocabularies_lesson ON vocabularies(lesson_id);
 CREATE INDEX IF NOT EXISTS idx_sentences_lesson ON sentences(lesson_id);
 CREATE INDEX IF NOT EXISTS idx_dialogues_lesson ON dialogues(lesson_id);
 CREATE INDEX IF NOT EXISTS idx_translations_lookup ON translations(entity_type, entity_id);
+
+-- Disable Row Level Security (RLS) to allow public read/write access via API
+ALTER TABLE languages DISABLE ROW LEVEL SECURITY;
+ALTER TABLE native_languages DISABLE ROW LEVEL SECURITY;
+ALTER TABLE levels DISABLE ROW LEVEL SECURITY;
+ALTER TABLE lessons DISABLE ROW LEVEL SECURITY;
+ALTER TABLE vocabularies DISABLE ROW LEVEL SECURITY;
+ALTER TABLE sentences DISABLE ROW LEVEL SECURITY;
+ALTER TABLE dialogues DISABLE ROW LEVEL SECURITY;
+ALTER TABLE translations DISABLE ROW LEVEL SECURITY;
+
