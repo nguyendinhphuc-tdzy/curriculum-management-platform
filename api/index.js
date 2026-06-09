@@ -310,6 +310,30 @@ app.get('/api/native-languages', async (req, res) => {
 app.get('/api/lessons', async (req, res) => {
   const { language, level } = req.query;
   try {
+    if (supabase) {
+      if (language && level) {
+        const { data: levelsData, error: lvlErr } = await supabase
+          .from('levels')
+          .select('id')
+          .eq('language_id', language)
+          .eq('level_number', parseInt(level))
+          .single();
+        
+        if (levelsData) {
+          const { data, error } = await supabase
+            .from('lessons')
+            .select('*')
+            .eq('level_id', levelsData.id);
+          if (!error) return res.json(data);
+        } else {
+          return res.json([]); // Return empty list if level doesn't exist in Supabase
+        }
+      } else {
+        const { data, error } = await supabase.from('lessons').select('*');
+        if (!error) return res.json(data);
+      }
+    }
+
     const db = await readDb();
     let levelId = null;
 
@@ -318,23 +342,6 @@ app.get('/api/lessons', async (req, res) => {
         l => l.language_id === language && l.level_number === parseInt(level)
       );
       levelId = foundLevel ? foundLevel.id : 'none';
-    }
-
-    if (supabase) {
-      let query = supabase.from('lessons').select('*');
-      if (levelId) {
-        const { data: levelsData } = await supabase
-          .from('levels')
-          .select('id')
-          .eq('language_id', language)
-          .eq('level_number', parseInt(level))
-          .single();
-        if (levelsData) {
-          query = query.eq('level_id', levelsData.id);
-        }
-      }
-      const { data, error } = await query;
-      if (!error) return res.json(data);
     }
 
     let result = db.lessons;
